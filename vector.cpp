@@ -1,5 +1,5 @@
 /*
-Pending : Trivial types Fast Path / exception safety of new / Iterator / Testing
+Pending : Trivial types Fast Path / Allocator / exception safety of new / Iterator / Testing
 */
 template<typename T>
 class Vector {
