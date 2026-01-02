@@ -1,3 +1,1 @@
-# CppWorkspace
-
-Exploring C++
+# Exploring C++
