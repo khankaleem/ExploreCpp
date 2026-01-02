@@ -3,7 +3,7 @@
 */
 template<typename T>
 class MemoryPool {
-  //Can replace both of these using sharedPointerMinimal.cpp also
+  //Can replace both of these using ds in sharedPointerMinimal.cpp also
   std::vector<T*> m_pool; // Stores available memory for allocation
   std::vector<void*> m_toFree; // Stores allocations to delete on Dtor
 
