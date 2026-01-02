@@ -3,8 +3,10 @@
 */
 template<typename T>
 class MemoryPool {
+  //Can replace both of these using sharedPointerMinimal.cpp also
   std::vector<T*> m_pool; // Stores available memory for allocation
   std::vector<void*> m_toFree; // Stores allocations to delete on Dtor
+
   size_t m_reallocSize{0}; // Stores reallocation size if pool runs out of mememory
   size_t m_numAllocated{0}; // Store the number of T for which memory is allocated
 
