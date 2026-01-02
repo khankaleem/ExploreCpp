@@ -5,6 +5,8 @@ Implement shared ptr
 pending: weak ptr / thread safety / alloc
 */
 
+
+
 template<typename T>
 class SharedPtr {
 public:
@@ -18,7 +20,7 @@ private:
     void decrement() {
       refCount--;
     }
-    size_t getRefCount() {
+    size_t getRefCount() const {
       return refCount;
     }
   };
