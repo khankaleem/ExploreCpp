@@ -1,6 +1,8 @@
+
+
 /*
 Implement shared ptr
-Pending: weak ptr / thread safety / deleter
+pending: weak ptr / thread safety / alloc
 */
 
 template<typename T>
@@ -10,6 +12,15 @@ public:
 private:
   struct ControlBlock {
     size_t refCount{1};
+    void increment() {
+      refCount++;
+    }
+    void decrement() {
+      refCount--;
+    }
+    size_t getRefCount() {
+      return refCount;
+    }
   };
   DataType* m_ptr{nullptr};
   ControlBlock* m_controlBlockPtr{nullptr};
@@ -17,8 +28,8 @@ private:
   // Release Ownership
   void release() noexcept {
     if (m_controlBlockPtr == nullptr) return;
-    m_controlBlockPtr->refCount--;
-    if (m_controlBlockPtr->refCount == 0) {
+    m_controlBlockPtr->decrement();
+    if (m_controlBlockPtr->getRefCount() == 0) {
       delete m_ptr;
       delete m_controlBlockPtr;     
     }
@@ -49,7 +60,7 @@ public:
   SharedPtr(const SharedPtr& other) noexcept : 
   m_ptr{other.m_ptr}, m_controlBlockPtr{other.m_controlBlockPtr}  {
     if (m_controlBlockPtr != nullptr) {
-      m_controlBlockPtr->refCount++;
+      m_controlBlockPtr->increment();
     }
   }
 
@@ -69,7 +80,7 @@ public:
     m_ptr = other.m_ptr;
     m_controlBlockPtr = other.m_controlBlockPtr;
     if (m_controlBlockPtr != nullptr) {
-      m_controlBlockPtr->refCount++;
+      m_controlBlockPtr->increment();
     }
     return *this;
   }
@@ -111,7 +122,7 @@ public:
 
   // get used count
   size_t getUsedCount() const {
-    return (m_controlBlockPtr ? m_controlBlockPtr->refCount : 0);
+    return (m_controlBlockPtr ? m_controlBlockPtr->getRefCount() : 0);
   }
   // get
   DataType* get() const {
