@@ -5,7 +5,7 @@ template<typename T>
 struct ControlBlock {
 private:
   size_t m_strongCount{0};
-  size_t m_weakCount{1};
+  size_t m_weakCount{0};
   T* m_ptr{nullptr};
 public:
   ControlBlock() = default;
