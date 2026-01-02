@@ -16,8 +16,7 @@ public:
       return;
     }
     void* rawBytes = allocateRaw(nAllocations);
-    addToPool(rawBytes, nAllocations, sizeof(T));
-    m_numAllocated += nAllocations;
+    addToPool(rawBytes, nAllocations);
   }
   
   //Rule of 5 : Disable Copy / Move
@@ -37,7 +36,7 @@ public:
   }
 
   // Adds memory available to pool
-  void addToPool(void* rawBytesAllocatedPtr, size_t nAllocations, size_t allocationSize) {
+  void addToPool(void* rawBytesAllocatedPtr, size_t nAllocations) {
     T* startAddress = reinterpret_cast<T*>(rawBytesAllocatedPtr);
     for(size_t i = 0; i < nAllocations; i++) {
       m_pool.push_back(startAddress + i);
@@ -49,8 +48,7 @@ public:
   // Resizes pool
   void resize(size_t nAllocations) {
     void* rawBytes = allocateRaw(nAllocations);
-    addToPool(rawBytes, nAllocations, sizeof(T));
-    m_numAllocated += nAllocations;
+    addToPool(rawBytes, nAllocations);
   }
 
   // Returns address to construct object
@@ -91,6 +89,7 @@ public:
   size_t adjustReallocSize(size_t size) {
     assert(size != 0);
     m_reallocSize = size;
+    return m_reallocSize;
   }
 };
 
