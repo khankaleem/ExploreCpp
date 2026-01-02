@@ -12,6 +12,7 @@ public:
 
   explicit MemoryPool(size_t nAllocations, size_t nReAllocSize = 1<<8) {
     m_reallocSize = std::max<size_t>(nReAllocSize, 1);
+    m_pool.reserve(nAllocations);
     if (nAllocations == 0) {
       return;
     }
@@ -52,6 +53,7 @@ public:
   }
 
   // Returns address to construct object
+  // this can leak if user does not handle throw on construction
   T* alloc() {
     // Resize
     if (m_pool.empty()) {
@@ -71,8 +73,14 @@ public:
   }
 
   // Function to construct T in place
+  /*
+    Note that Ctor can throw , to prevent that add: 
+      static_assert(std::is_nothrow_constructible_v<T, ArgsT...>, "MemoryPool::make requires nothrow construction");
+  */
   template<typename... ArgsT>
   T* make(ArgsT&&... args) {
+    // if construction throws we have a leak
+    static_assert(std::is_nothrow_constructible_v<T, ArgsT...>, "MemoryPool::make requires nothrow construction");
     return new (alloc()) T(std::forward<ArgsT>(args)...);
   }
 
@@ -86,10 +94,8 @@ public:
   }
 
   // Setters
-  size_t adjustReallocSize(size_t size) {
-    assert(size != 0);
-    m_reallocSize = size;
-    return m_reallocSize;
+  void adjustReallocSize(size_t size) {
+    m_reallocSize = (size == 0 ? 1 : size);
   }
 };
 
@@ -106,7 +112,7 @@ int main() {
   pool.dealloc(p3);
 
   struct A {
-    A() { std::cout << "Constucting\n"; }
+    A() noexcept { std::cout << "Constucting\n"; }
     ~A() { std::cout << "Destructing\n"; }
   };
   MemoryPool<A> pool1{1};
@@ -114,3 +120,4 @@ int main() {
   pool1.dealloc(p4);
 
 }
+
