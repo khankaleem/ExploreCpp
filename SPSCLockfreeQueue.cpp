@@ -52,7 +52,7 @@ public:
            : push - pop/top need to form a happens before relationship
     */
     // writer calls
-    bool push(const T& val) {
+    bool try_push(const T& val) {
         // synchronize with reader to ensure that data is read if queue is not full
         auto rear = m_rear.load(std::memory_order_relaxed);
         auto front = m_front.load(std::memory_order_acquire);
@@ -64,7 +64,7 @@ public:
         m_rear.store( (rear + 1) & (SIZE - 1), std::memory_order_release ); 
         return true;
     }
-    bool push(T&& val) {
+    bool try_push(T&& val) {
         // synchronize with reader to ensure that data is read if queue is not full
         auto rear = m_rear.load(std::memory_order_relaxed);
         auto front = m_front.load(std::memory_order_acquire);
@@ -77,7 +77,7 @@ public:
         return true;
     }
     template<typename... ArgsT>
-    bool emplace(ArgsT&&... args) {
+    bool try_emplace(ArgsT&&... args) {
         // synchronize with reader to ensure that data is read if queue is not full
         auto rear = m_rear.load(std::memory_order_relaxed);
         auto front = m_front.load(std::memory_order_acquire);
@@ -115,7 +115,7 @@ public:
         }
         return (m_ptr + front);
     }
-    bool pop() {
+    bool try_pop() {
         // synchronize with writer to ensure that data is written if queue is not empty
         auto rear = m_rear.load(std::memory_order_acquire);
         auto front = m_front.load(std::memory_order_relaxed);
@@ -147,7 +147,7 @@ int main() {
                 auto ptr = q.top();
                 c += (ptr == nullptr ? 0 : *ptr);
                 if (q.top()) {
-                    q.pop();
+                    q.try_pop();
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(2));
             }
@@ -156,7 +156,7 @@ int main() {
     std::thread w{
         [&q, &p]() {
             for(int i = 1; i < 100; i++) {
-                if ( q.push(i) ) {
+                if ( q.try_push(i) ) {
                     p += i;
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(3));
