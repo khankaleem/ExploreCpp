@@ -24,7 +24,6 @@ public:
     MRMWLockedStdQueue& operator=(const MRMWLockedStdQueue&) = delete;
 
     // writer calls
-    // multiple writers pushing can c
     void push(const T& data) {
         LockGuard guard{m_lock};
         m_queue.push(data);
