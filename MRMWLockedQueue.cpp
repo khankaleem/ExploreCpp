@@ -2,6 +2,11 @@
 #include <condition_variable>
 #include <mutex>
 
+/*
+    Multi Reader Multi Writer Queue
+    This is a bounded Circular Queue
+*/
+
 class MRMWLockedQueue {
     std::vector<int> m_arr;
     size_t m_front{0};
