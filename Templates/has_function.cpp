@@ -4,7 +4,7 @@
 #include<cassert>
 
 /*
-  compile time check for existence of a function in a class
+  Compile time check for existence of a function in a class
 */
 
 // Primary template: All templates for has_foo must be specializaitions
