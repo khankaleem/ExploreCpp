@@ -41,6 +41,11 @@ public:
   // Adds memory available to pool
   void addToPool(void* rawBytesAllocatedPtr, size_t nAllocations) {
     T* startAddress = reinterpret_cast<T*>(rawBytesAllocatedPtr);
+    /* 
+      Note: As allocation has been done using new, the start address and end address is not
+      cache aligned, so there is a very good chance of false sharing with some irrelevant data
+      sitting in the allocated block of first and last allocation.
+    */ 
     for(size_t i = 0; i < nAllocations; i++) {
       m_pool.push_back(startAddress + i);
     }
