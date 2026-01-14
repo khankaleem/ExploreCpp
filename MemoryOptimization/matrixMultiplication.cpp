@@ -9,6 +9,8 @@ std::size_t CLS = std::hardware_destructive_interference_size; // Cache line siz
 /*
 Cache efficient multiplication of two matrices
 Runtime: 500-600 millis
+
+Idea is that on fetching a Cche line, reuse it as muach as possible
 */
 
 void multiplyCacheEfficient(
