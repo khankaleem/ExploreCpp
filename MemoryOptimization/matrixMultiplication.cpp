@@ -8,7 +8,7 @@ std::size_t CLS = std::hardware_destructive_interference_size; // Cache line siz
 
 /*
 Cache efficient multiplication of two matrices
-Runtime: 5-6 millis
+Runtime: 500-600 millis
 */
 
 void multiplyCacheEfficient(
