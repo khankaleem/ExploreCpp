@@ -22,7 +22,7 @@ void multiplyCacheEfficient(
             for (size_t k = 0; k < N; k += Block) {
                 // multiply i - k block k - j block to get i-j block
                 for (size_t i2 = 0; i2 < Block; i2++) {
-                    for (size_t k2 = 0; k2 < Block; k2++) {
+                    for (size_t k2 = 0; k2 < Block; k2++) { // Change the order between k and j for Loop Interchange Optimization - saves 3 millis
                         for (size_t j2 = 0; j2 < Block; j2++) {
                             res[i+i2][j+j2] += A[i+i2][k+k2] * B[k+k2][j+j2];
                         }
