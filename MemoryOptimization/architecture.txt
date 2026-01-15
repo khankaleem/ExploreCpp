@@ -1,1 +1,23 @@
+CPU Caches:
+
+
+Virtual Memory:
+
+
+Cache Bypass:
+
+
+Optimizing L1d:
+
+
+Optimizing L1i:
+
+
+Prefetching:
+
+
+
+Multithreaded Optimizations:
+
+
 
