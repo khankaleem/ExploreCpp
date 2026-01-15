@@ -38,7 +38,15 @@ Used to hide Main Memory Latency
     rw = 0 : Acquire in Exclusive / Shared state
     rw = 1 : Acquire in Exclusive / Shared state, then write to it
     locality = 0 (Non temporal) / 1 (>=L1) / 2(>=L2) / 3 (>= L3)
-              
+
+
+Direct Cache Access:
+  NIC -> Use DMA to put incoming packet data into RAM
+         DCA flag is set in these transfers, Processor listens via FSB to DCA flag, 
+         and adds data to Cache
+         Intel replaced this with DDIO, where the destination is not RAM but compulsoraliy in  L3.
+
+
 
 Multithreaded Optimizations:
 
