@@ -37,7 +37,7 @@ Used to hide Main Memory Latency
     __builtin_prefetch (const void *addr, rw, locality)
     rw = 0 : Acquire in Exclusive / Shared state
     rw = 1 : Acquire in Exclusive / Shared state, then write to it
-    locality = 0 / 1 / 2 / 3
+    locality = 0 (Non temporal) / 1 (>=L1) / 2(>=L2) / 3 (>= L3)
               
 
 Multithreaded Optimizations:
