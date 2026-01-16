@@ -7,6 +7,10 @@ Virtual Memory:
       
 
 
+
+
+
+
 Cache Bypass:
   Processors provide support for non temporal write operations
   Gcc provides streaming instrinsics for x86-64
@@ -19,6 +23,10 @@ Cache Bypass:
   They are implemented using streaming load buffers
   We can load a full 64 bytes at once in the streaming load buffers
   e.g __m128i _mm_stream_load_si128 (__m128i *p);
+
+
+
+
 
 Optimizing L1d:
   1. Matrix Mulitplication Example:  
@@ -57,9 +65,49 @@ Optimizing L1d:
         So after every 12bits, i.e 4096 bytes data maps to existing sets -> we can avoid this
       
     
-  
+
+
+
 Optimizing L1i:
-  
+  Code is linear between jumps, in this period processor prefetcher instructions effieciently
+  Jumps disturb this layout
+  1. Jump target might not be statically determined
+  2. Even if it is statically determined, fetch might take a long time
+  This stalls execution and negatively impacts performance 
+  Instructions are generally cached in decoded form
+
+  Hardware Branch Predictor : Determine the target of jump many cycles before
+  Maxmime Instruction Cache Performance:
+  1. Reduce Code footprint : Balance with with optimizations like loop unrolling , and inlining.
+      O3 -> deals with loop optimizations, and function inlining
+      Inlining Pros:
+        Inlining allows compiler to optimize large chunks of code at a time, whch enables machien code with better ILP
+              
+      Inlining Cons:  If compiler inline function size is not good for the program then it shoudl be lowered
+
+        Increases size causing cache pressure
+        Inlining will cause code not to be in L1i 
+        Inlining might cause branch predictor not to work efficiently since it has already seen the code
+        
+  2. Linear Code execution
+      Whenever conditional execution is used, and its losided, static prediction can fail, causing pipline flush.
+      To avoid we can use compiler hints
+      #define unlikely(expr) __builtin_expect(!!(expr), 0)
+      #define likely(expr) __builtin_expect(!!(expr),
+      These hints allow compiler to optimize the binary memory layout
+      Pros:
+        1. Better cold start
+        2. Fall through - no rediredction to a far away new address
+        3. Cache Line Waste is minimized by exiling cold code to a different page, and increasing spatial locality of cold code
+        Block reordering takes place.
+        Cold code is stored in .text.unlikely
+
+  3. Align Code
+    We need to align to optimize prefetching and decoding
+      1. start of functions
+      2. start of blocks reached through jumps
+      3. maybe loops
+
 
 
 
@@ -85,6 +133,10 @@ Direct Cache Access:
          DCA flag is set in these transfers, Processor listens via FSB to DCA flag, 
          and adds data to Cache
          Intel replaced this with DDIO, where the destination is not RAM but compulsoraliy in  L3.
+
+
+
+
 
 
 
