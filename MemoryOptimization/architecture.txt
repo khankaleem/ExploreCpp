@@ -1,25 +1,65 @@
 CPU Caches:
-
+  
   
 
 
 Virtual Memory:
-
-
+      
 
 
 Cache Bypass:
-
-
-
+  Processors provide support for non temporal write operations
+  Gcc provides streaming instrinsics for x86-64
+  Writes are written to write combine buffer of the processor
+  Memory is not loaded into cache, but streamed straight to RAM
+  Memory order is relaxed for these writes
+  e.g void _mm_stream_si128(int *p, __m128i a);
+  
+  We can also do non temporal reads, they dont bring memory into cache
+  They are implemented using streaming load buffers
+  We can load a full 64 bytes at once in the streaming load buffers
+  e.g __m128i _mm_stream_load_si128 (__m128i *p);
 
 Optimizing L1d:
+  1. Matrix Mulitplication Example:  
+    Split the matrix into 64 * 64 blocks for the mulitplication
+    This ensures that every cache line loaded is utilized to the full before eviction
 
+  2. Struct Layout: Pack the object in as little Cache lines as Possible, to imporive cache efficiency
+    1. Move the structure element which is most likely to be the critical word to the front
+    2. In a structure Arrange elements in the order in which they are likely to be accessed
+    3. For a structure spanning multiple cache lines, each cache line block should be rearranged to follow 1/2.
+    
+    If the Object itself is not aligned then 1/2 are useless. 
+    To align an Object:
+      1. For dynamically allocated: use operator new Struct, automatically aligns the object, 
+         For statically allocated we can use alignas(64)
+      2. We can mark the alignemnt of the Struct with alignas(64), will work for arrays as well
 
+    Within a stack compiler can take care about the alognment,
+    but the caller must align the stack ptr
+    but VLAs will spoil the party and will need dynamic alignement by the callee
+    Hence Alignment of stack variables comes at a cost.
+    
+    x86-64 has a hard requirement that stack pointer must be 16 byte aligned for SSE instructions to work
+    The caller must align the stack ptr to atleast 16bytes
 
+  3. Seperate Irrelevant data from struct to increase cache performance
 
+  4. Minimize Conflict Misses: Higher Assocaitivity decreases miss rate but increases search time
+      L1d Cache is small, but not small enough to be Fully Associative, We primarily need to have lightning speed of Ascess, so lower associativy is ideal, usuall 8way
+      L2d Cache is larger, so we can increase associativty to decrease conflict misses, usually 16way
+
+      L1d is VIPT
+        So programmer has control to what goes in a set.
+        If L1d is 8 - way assocaitaive and size is 32KB, 64 Byte Cache Line
+        Number of sets = 32KB / 64B / 8 = 64 sets -> addressable using 6 bits
+        So after every 12bits
+      
+    
+  
 Optimizing L1i:
-
+  
 
 
 
