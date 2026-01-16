@@ -64,8 +64,14 @@ Multithreaded Optimizations:
                        3. Variables read / write should be aligned to cache lines size
                        4. Use TLS : Can cause high memory foot print, and impacts thread launch time
       
+    Atomicity:
+          Two threads writing to the same location dont wait for E access. The read the value and when E access is available
+          they write the value. -> not thread safe
+          Atomic Operations:  Make the above read-write atomic.
 
-
+          CAS -> Costly, multiple RFOs
+          Fetch Add -> Only one RFO request : for arithematic this is preferred
+    
 
 
 
