@@ -42,11 +42,25 @@ CPU Caches:
         Another reason prefetcher cant hide RAM latency will be Page faults because hardware prefetcher cant work outside page boundaries
         Also if WSS increases this can cause TLB misses, resulting in a page table walk, which itself resides in RAM.
 
-    
 
-  
-        
-      
+  Write Behaviour:
+      Cache is just an extension of memory, if Cache line is modifed it means memory is modified, and all processors must agree on this 
+      Write through Cache: Immediately flushed to memory : This would increase the bus traffic 
+      Write Back : Dirty bit tracks the updated cache line, and is finally writeen when appropriate. 
+
+      Cache Coherency:
+        MESI Cache Protocol
+        Processors Snoop on the bus, operations done by a processor and announced, address of the lines are visible on the bus.
+
+        M: 
+          Other processor requests read, State chagnes to shared, and contents are sent to the requesting processor. Memory controller writes to Main Memory as well, otherwise state cannot be shared.
+          Other processor requests write: Lead to RFO request, currently processor invalidates its copy
+      E: 
+        If lcoal processor wants to write no RFO -> this is an optimization
+
+        RFOs are required when thread is migrated to another core, atomic operations, synchronization, false sharing 
+        MESI transaciton cannot happen until all processors have have had a chance to reply, 
+        Bus contention is possible, NUMA systems will ahve high latency, 
 
 
 
