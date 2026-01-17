@@ -56,7 +56,7 @@
                  │                                │
                  └────────────────────────────────┘
 
-
+Scheduler:
 kernel tries to schedule / allocate emory on the same Numa node but does not guarantee
       NUMA Node 0                  NUMA Node 1
    ┌─────────────────┐          ┌─────────────────┐
@@ -67,7 +67,16 @@ kernel tries to schedule / allocate emory on the same Numa node but does not gua
         |       |                     |       |
      tasks   pages                 tasks   pages
 
+When the Linux scheduler makes placement decisions, the implicit preference order is roughly:
+ -> same core
+ -> same SMT sibling (Hyper-Threading)
+ -> same die
+ -> same socket
+ -> same NUMA node
+ -> remote NUMA node
 
+
+  
 CPU Caches:
   Cache : SRAM, Resources administrated by the processors
   Cache stores copies of data / instructions which is likely to be used soon, it works beause all programs have temporal, and spatial locality
