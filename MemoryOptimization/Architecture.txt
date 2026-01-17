@@ -3,7 +3,7 @@
                  │       (1 CPU Package)           │
                  │                                │
                  │   ┌────────────────────────┐   │
-                 │   │           Die          │   │
+                 │   │           Die0         │   │
                  │   │                        │   │
                  │   │   ┌────────────────┐   │   │
                  │   │   │   Shared L3    │◄──┼───┼─ LLC (data only)
@@ -55,6 +55,17 @@
                  │   └────────────────────────┘   │
                  │                                │
                  └────────────────────────────────┘
+
+
+kernel tries to schedule / allocate emory on the same Numa node but does not guarantee
+      NUMA Node 0                  NUMA Node 1
+   ┌─────────────────┐          ┌─────────────────┐
+   │ CPUs: 0–15      │◄────────►│ CPUs: 16–31     │
+   │ Local DRAM      │  slower  │ Local DRAM      │
+   └─────────────────┘          └─────────────────┘
+        ↑       ↑                     ↑       ↑
+        |       |                     |       |
+     tasks   pages                 tasks   pages
 
 
 CPU Caches:
