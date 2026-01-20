@@ -60,7 +60,16 @@ Cache Coherence:
         Add E state
         E : Exclusive Access (R / W) Clean
 
-        Snooping :
+        Intel uses MESIF
+        Textbook MOESI talks only about dirty-data correctness; clean-data responders are a performance             optimization and intentionally left unspecified.
+
+        I state -> write -> RFO request on Bus -> these are expensive
+          1. Invalidation
+          2. Supply
+          3. Store Buffer Drain
+        Only coherence requests that change other caches’ states require acknowledgments.
+
+  Snooping :
           Broadcast request for others to see them an establsih ordering
           Bandwidth contention!
           Does not work well with > 8-16 cores
