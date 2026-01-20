@@ -131,7 +131,7 @@ Synchronization:
           TSET r, lockvar // reading until lock is free
         }
       }
-
+  CAS is bad, fetch add is better
 
   Barrier Implementation:
   
