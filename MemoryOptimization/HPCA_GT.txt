@@ -1,0 +1,127 @@
+UMA: Works only small machines 2-16 cores
+  Core            Core
+  ------------------- Bus
+    |         |
+    |         |
+    |         |
+    |         |
+    IO    Main Memory
+
+Disadvantages:
+  Memory needs to be large and slow
+  Bandwidth Contention
+
+SMT Hardware:
+  PC --> [ Fetch ] ---> [ Decoder ] -> [RAT] -> [Reservation Station] -> [ROB] 
+
+      2 RATs 
+      2 PCs 
+      1 ROB -> Large Shared with some changes
+
+      VIPT L1 -> TLB should be Thread Aware
+      Cache Thrashing as cache is shared
+
+
+Cache Coherence:
+  1. Correct Uniprocessor Behaviour
+  2. If core C1 writes to X, and C2 reads AFTER A SUFFICIENT TIME, 
+     and there are no writes in between, C2 reads the value writtten by C1
+  3. Writes to the same location are serialized: Any two writes to X must
+     be seen to occur in the same order on all cores
+
+  How to achieve Coherence :
+    1. No Caches
+    2. Share L1 Cache
+    3. Forc Read to see Write in another Core
+          a). Write Update
+          b). Write Invalidate
+
+        Mechanism:
+          a). Snooping based Coherence
+          b). Directory based Coherence
+     MSI Protocol : Disadvantage Memory Bandwidth Contention in C2C
+     Cache to Cache Transfers:
+        We want to opitmize memory read / write due to limited BW
+        If some core(s) has most recent cache line then dont fetch it from memory
+        Avoid write to memory as long as there is a core whihc hodl the most recent cache line
+
+      Introducing O state in MOSI Protocol
+        M -> snoops read -> O
+        O -> like S but ->  snoop a a read serve data
+                            eventually write to memory when replaced
+    
+        M : Exclusive R/W, Dirty
+        S : Shared R, Clean
+        O : Shared R, Dirty
+    
+        Inefficiency : in single threaded program or thread private data
+          I -> Miss -> S -> send Invalid -> M
+
+        Add E state
+        E : Exclusive Access (R / W) Clean
+
+        Snooping :
+          Broadcast request for others to see them an establsih ordering
+          Bandwidth contention!
+          Does not work well with > 8-16 cores
+
+
+        Directory Based Coherence :
+
+
+
+
+
+        Cache Miss :
+          3 Cs
+          Compulsory  / Conflict  / Capacity 
+          There ia also a Coherence Miss
+            1). False Sharing
+            2). True Sharing
+
+
+
+Synchronization:
+    Lock is a shared variable
+
+    tydef int mutex;
+    void init(mutex& lock_){ lock_ = 0; }
+    void lock(mutex& lock_) {
+      while(lock_); // this entire thing should be atomic
+      lock_ = 1; // so we need somehting which makes this a criitcal section
+    }
+    void unlock() {
+      lock_ = 0;
+    }
+
+    special atomic read write instructions
+    
+    EXCH -> Exchange
+      lock(lockvar&) {
+        r = 1
+        while(r==1) {
+          EXCH r, lockvar // keep writing keep invaidating, generates bus traffic
+        }
+      }
+
+    TSET -> Test and Set
+      lock(lockvar&) {
+        r = 0
+        while(r==0) {
+          TSET r, lockvar // reading until lock is free
+        }
+      }
+
+
+  Barrier Implementation:
+  
+
+
+
+
+
+
+
+
+
+
