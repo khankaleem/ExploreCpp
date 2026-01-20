@@ -133,8 +133,56 @@ Synchronization:
       }
   CAS is bad, fetch add is better
 
+
+
+
   Barrier Implementation:
   
+
+
+
+Branch Prediction:
+  Predict jump at predicted direction
+          several cycles before execution to boost ILP
+  Prediction is based on branch history
+  The delay b/w fetching and executing a branch can be several cycles leading to sever penalty in case of mispredict
+  Cannot deal with a nested loop
+  e.g
+    for (i < 5){
+      for(j < 5)
+    LLLLLELLLLLE
+        each mispredict costs 2 mispredictions
+
+  2 Bit Predictor:
+    Branch Prediction is changed only after 2 mispredicts
+            BHT
+            00  Strongly not Taken
+            01  Weakly not Taken
+            10  Weakly Taken
+            11  Strongly Taken
+
+
+  Local history predictor:
+    for(int i = 0; i < n; i++)
+    for(int j = 0; j < 3; j++) -> 1110
+
+
+
+  Global Branch Predictor:
+    Dorectoipn depends on another branch
+    if (b){
+       if(!b) {
+       }
+    }
+    Single n bit records shift registore records the global history
+    of most recent n branches
+    
+  GSelect n/m : n global history bits, m pc bits
+    
+  GShare n/m : n xor m
+
+
+
 
 
 
